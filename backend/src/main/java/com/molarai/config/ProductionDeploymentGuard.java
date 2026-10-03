@@ -8,12 +8,13 @@ import org.springframework.context.annotation.Profile;
 @Profile({"prod", "production"})
 public class ProductionDeploymentGuard {
     public ProductionDeploymentGuard(
+            @Value("${molarai.cancellation.enabled:false}") boolean cancellationEnabled,
             @Value("${molarai.cancellation.otp.provider:mock}") String otpProvider,
             @Value("${molarai.embedding.provider}") String embeddingProvider,
             @Value("${molarai.embedding.api-key:}") String embeddingApiKey,
             @Value("${molarai.ollama.embedding-base-url:}") String ollamaEmbeddingBaseUrl,
             @Value("${molarai.ollama.chat.api-key:}") String chatApiKey) {
-        if ("mock".equalsIgnoreCase(otpProvider)) {
+        if (cancellationEnabled && "mock".equalsIgnoreCase(otpProvider)) {
             throw new IllegalStateException(
                     "Production startup requires a real OTP delivery provider; mock delivery is development-only");
         }
