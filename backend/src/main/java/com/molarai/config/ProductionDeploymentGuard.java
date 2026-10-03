@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 @Profile({"prod", "production"})
 public class ProductionDeploymentGuard {
     public ProductionDeploymentGuard(
-            @Value("${molarai.cancellation.enabled:false}") boolean cancellationEnabled,
+            @Value("${CANCELLATION_ENABLED:${molarai.cancellation.enabled:false}}") boolean cancellationEnabled,
             @Value("${molarai.cancellation.otp.provider:mock}") String otpProvider,
             @Value("${molarai.embedding.provider}") String embeddingProvider,
             @Value("${molarai.embedding.api-key:}") String embeddingApiKey,
