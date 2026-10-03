@@ -1,0 +1,383 @@
+[
+  {
+    "id": "hours-001",
+    "question": "What time does the dental office open and close during the week?",
+    "expectedSourceDocuments": [
+      "Clinic Hours"
+    ],
+    "category": "clinic_hours",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "Monday",
+      "8:00 a.m."
+    ],
+    "forbiddenAnswerPatterns": [
+      "(?i)closes Saturday from 1:00 p[.]m[.] to 5:00 p[.]m[.]"
+    ],
+    "expectedDocumentIds": [
+      "01-clinic-hours"
+    ]
+  },
+  {
+    "id": "hours-002",
+    "question": "Are you open on Sundays or public holidays?",
+    "expectedSourceDocuments": [
+      "Clinic Hours"
+    ],
+    "category": "clinic_hours",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "closed",
+      "Sunday"
+    ],
+    "expectedDocumentIds": [
+      "01-clinic-hours"
+    ]
+  },
+  {
+    "id": "services-001",
+    "question": "Can I get a crown or a root canal at MolarAI?",
+    "expectedSourceDocuments": [
+      "Dental Services"
+    ],
+    "category": "services",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "crown",
+      "root canal"
+    ],
+    "expectedDocumentIds": [
+      "02-services"
+    ]
+  },
+  {
+    "id": "services-002",
+    "question": "Do you provide braces or orthodontic care?",
+    "expectedSourceDocuments": [
+      "Dental Services"
+    ],
+    "category": "services",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "orthodontic",
+      "braces"
+    ],
+    "expectedDocumentIds": [
+      "02-services"
+    ]
+  },
+  {
+    "id": "insurance-001",
+    "question": "Do you accept Aetna insurance?",
+    "expectedSourceDocuments": [
+      "Insurance and Coverage"
+    ],
+    "category": "insurance",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "out-of-network",
+      "out of network",
+      "direct billing"
+    ],
+    "expectedDocumentIds": [
+      "03-insurance"
+    ]
+  },
+  {
+    "id": "insurance-002",
+    "question": "Can your office tell me how much my insurance will reimburse?",
+    "expectedSourceDocuments": [
+      "Insurance and Coverage"
+    ],
+    "category": "insurance",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "insurer",
+      "insurance",
+      "estimate"
+    ],
+    "expectedDocumentIds": [
+      "03-insurance"
+    ]
+  },
+  {
+    "id": "pricing-001",
+    "question": "How much is a regular dental cleaning?",
+    "expectedSourceDocuments": [
+      "Example Pricing"
+    ],
+    "category": "pricing",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "$110",
+      "110"
+    ],
+    "expectedDocumentIds": [
+      "04-pricing"
+    ]
+  },
+  {
+    "id": "pricing-002",
+    "question": "What is the fee for an emergency evaluation during office hours?",
+    "expectedSourceDocuments": [
+      "Example Pricing"
+    ],
+    "category": "pricing",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "$125",
+      "125"
+    ],
+    "expectedDocumentIds": [
+      "04-pricing"
+    ]
+  },
+  {
+    "id": "cancellation-001",
+    "question": "How far in advance should I call to move my appointment?",
+    "expectedSourceDocuments": [
+      "Cancellation and Rescheduling Policy"
+    ],
+    "category": "cancellation_rescheduling",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "24 hours"
+    ],
+    "expectedDocumentIds": [
+      "05-cancellation-policy"
+    ]
+  },
+  {
+    "id": "cancellation-002",
+    "question": "Is there a charge if I miss my appointment without calling?",
+    "expectedSourceDocuments": [
+      "Cancellation and Rescheduling Policy"
+    ],
+    "category": "cancellation_rescheduling",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "$35",
+      "35"
+    ],
+    "expectedDocumentIds": [
+      "05-cancellation-policy"
+    ]
+  },
+  {
+    "id": "new-patients-001",
+    "question": "What should I bring to my first appointment?",
+    "expectedSourceDocuments": [
+      "Information for New Patients"
+    ],
+    "category": "new_patients",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "photo ID",
+      "medications",
+      "allergies"
+    ],
+    "expectedDocumentIds": [
+      "06-new-patients"
+    ]
+  },
+  {
+    "id": "new-patients-002",
+    "question": "How early should a first-time patient arrive?",
+    "expectedSourceDocuments": [
+      "Information for New Patients"
+    ],
+    "category": "new_patients",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "15 minutes"
+    ],
+    "expectedDocumentIds": [
+      "06-new-patients"
+    ]
+  },
+  {
+    "id": "pediatric-001",
+    "question": "At what age can children start coming for preventive dental visits?",
+    "expectedSourceDocuments": [
+      "Pediatric Dentistry"
+    ],
+    "category": "pediatric_dentistry",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "5",
+      "five"
+    ],
+    "expectedDocumentIds": [
+      "07-pediatric-dentistry"
+    ]
+  },
+  {
+    "id": "pediatric-002",
+    "question": "Does a parent need to attend a child's dental appointment?",
+    "expectedSourceDocuments": [
+      "Pediatric Dentistry"
+    ],
+    "category": "pediatric_dentistry",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "parent",
+      "guardian"
+    ],
+    "expectedDocumentIds": [
+      "07-pediatric-dentistry"
+    ]
+  },
+  {
+    "id": "emergencies-001",
+    "question": "What should I do for severe facial injury or trouble breathing?",
+    "expectedSourceDocuments": [
+      "Dental Urgent and Emergency Care"
+    ],
+    "category": "dental_emergencies",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "911",
+      "emergency department"
+    ],
+    "expectedDocumentIds": [
+      "08-dental-emergencies"
+    ]
+  },
+  {
+    "id": "emergencies-002",
+    "question": "I chipped a tooth. Can you see me today?",
+    "expectedSourceDocuments": [
+      "Dental Urgent and Emergency Care"
+    ],
+    "category": "dental_emergencies",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "call",
+      "same-day",
+      "does not guarantee"
+    ],
+    "expectedDocumentIds": [
+      "08-dental-emergencies"
+    ]
+  },
+  {
+    "id": "payments-001",
+    "question": "Which payment types do you take at the clinic?",
+    "expectedSourceDocuments": [
+      "Payment Information"
+    ],
+    "category": "payments",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "credit",
+      "cash",
+      "health savings"
+    ],
+    "expectedDocumentIds": [
+      "09-payments"
+    ]
+  },
+  {
+    "id": "payments-002",
+    "question": "Do I pay after the appointment, or do you offer financing?",
+    "expectedSourceDocuments": [
+      "Payment Information"
+    ],
+    "category": "payments",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "time of service",
+      "financing"
+    ],
+    "expectedDocumentIds": [
+      "09-payments"
+    ]
+  },
+  {
+    "id": "contact-001",
+    "question": "Where is the dental studio located?",
+    "expectedSourceDocuments": [
+      "Contact and Location"
+    ],
+    "category": "contact_location",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "Portland",
+      "42 Juniper Commons"
+    ],
+    "expectedDocumentIds": [
+      "10-contact-and-location"
+    ]
+  },
+  {
+    "id": "contact-002",
+    "question": "How can I reach the front desk by phone or email?",
+    "expectedSourceDocuments": [
+      "Contact and Location"
+    ],
+    "category": "contact_location",
+    "expectedBehavior": "answer_from_knowledge",
+    "expectedAnswerPhrases": [
+      "503",
+      "molarai.example"
+    ],
+    "expectedDocumentIds": [
+      "10-contact-and-location"
+    ]
+  },
+  {
+    "id": "unsupported-001",
+    "question": "What is the clinic Wi-Fi password?",
+    "expectedSourceDocuments": [],
+    "category": "unsupported",
+    "expectedBehavior": "acknowledge_missing_information",
+    "forbiddenAnswerPatterns": [
+      "(?i)(?:wi-?fi|wireless).{0,30}(?:password|passcode) +(?:is|:) +(?!not[ ]|unavailable|unknown|missing)[A-Za-z0-9_!@#$%&*+-]{4,}"
+    ],
+    "expectedDocumentIds": []
+  },
+  {
+    "id": "unsupported-002",
+    "question": "Is there free parking in the clinic's lot?",
+    "expectedSourceDocuments": [],
+    "category": "unsupported",
+    "expectedBehavior": "acknowledge_missing_information",
+    "forbiddenAnswerPatterns": [
+      "(?i)(?:parking (?:is|remains) free|free parking (?:is|remains) available|parking costs? [$] *[0-9]+|parking lot (?:has|offers))"
+    ],
+    "expectedDocumentIds": []
+  },
+  {
+    "id": "unsupported-003",
+    "question": "Which dentist is assigned to my appointment next Tuesday?",
+    "expectedSourceDocuments": [],
+    "category": "unsupported",
+    "expectedBehavior": "acknowledge_missing_information",
+    "forbiddenAnswerPatterns": [
+      "(?:[Dd]entist|[Dd]octor).{0,35}(?:[Ii]s|[Ww]ill be|[Nn]amed) +(?:[Dd]r[.]? +)?[A-Z][a-z]+"
+    ],
+    "expectedDocumentIds": []
+  },
+  {
+    "id": "unsupported-004",
+    "question": "Does MolarAI have a wheelchair ramp at the entrance?",
+    "expectedSourceDocuments": [],
+    "category": "unsupported",
+    "expectedBehavior": "acknowledge_missing_information",
+    "forbiddenAnswerPatterns": [
+      "(?i)(?:wheelchair ramp|ramp).{0,20}(?:is provided|is available|is located|exists|installed)"
+    ],
+    "expectedDocumentIds": []
+  },
+  {
+    "id": "unsupported-005",
+    "question": "Can you tell me what parking costs near the office?",
+    "expectedSourceDocuments": [],
+    "category": "unsupported",
+    "expectedBehavior": "acknowledge_missing_information",
+    "forbiddenAnswerPatterns": [
+      "(?i)parking.{0,35}(?:[$] *[0-9]|costs? +(?:about|is|are)|per +hour)"
+    ],
+    "expectedDocumentIds": []
+  }
+]

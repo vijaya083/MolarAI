@@ -1,0 +1,38 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+!.env.production.example
+.vercel/
+
+# Java / Maven
+**/target/
+*.class
+*.log
+
+# Node / Vite
+**/node_modules/
+**/dist/
+**/.vite/
+npm-debug.log*
+
+# Local database files and data directories
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.mv.db
+*.h2.db
+*.trace.db
+*.dump
+*.backup
+*.bak
+/pgdata/
+/postgres-data/
+/database-data/
+
+# IDEs
+.idea/
+.vscode/
+*.iml

@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: molarai-backend
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/molarai}
+    username: ${DATABASE_USERNAME:molarai}
+    password: ${DATABASE_PASSWORD:local_dev_only_change_me}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    placeholders:
+      embedding-dimension: ${molarai.embedding.dimension}
+server:
+  port: ${PORT:8080}
+
+molarai:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  embedding:
+    provider: ${EMBEDDING_PROVIDER:ollama}
+    api-key: ${EMBEDDING_API_KEY:}
+    model: ${EMBEDDING_MODEL:embeddinggemma}
+    dimension: ${EMBEDDING_DIMENSION:768}
+    base-url: ${EMBEDDING_API_BASE_URL:https://api.openai.com/v1}
+  ollama:
+    embedding-base-url: ${OLLAMA_EMBEDDING_BASE_URL:http://localhost:11434}
+    chat:
+      base-url: ${OLLAMA_CHAT_BASE_URL:${OLLAMA_BASE_URL:http://localhost:11434}/api}
+      model: ${OLLAMA_CHAT_MODEL:qwen3:4b}
+      api-key: ${OLLAMA_API_KEY:}
+      max-output-tokens: ${OLLAMA_CHAT_MAX_OUTPUT_TOKENS:256}
+      faq-max-output-tokens: ${OLLAMA_FAQ_MAX_OUTPUT_TOKENS:128}
+      timeout-seconds: ${OLLAMA_CHAT_TIMEOUT_SECONDS:45}
+  appointment:
+    time-zone: ${APPOINTMENT_TIME_ZONE:America/Los_Angeles}
+  cancellation:
+    enabled: ${CANCELLATION_ENABLED:true}
+    otp:
+      provider: ${CANCELLATION_OTP_PROVIDER:mock}
+      expiry-seconds: ${CANCELLATION_OTP_EXPIRY_SECONDS:300}
+      max-attempts: ${CANCELLATION_OTP_MAX_ATTEMPTS:5}
+      resend-cooldown-seconds: ${CANCELLATION_OTP_RESEND_COOLDOWN_SECONDS:60}
+      expose-code: ${CANCELLATION_OTP_EXPOSE_CODE:false}
+  clinic:
+    weekday-open: ${CLINIC_WEEKDAY_OPEN:09:00}
+    weekday-close: ${CLINIC_WEEKDAY_CLOSE:14:00}
+    saturday-open: ${CLINIC_SATURDAY_OPEN:09:00}
+    saturday-close: ${CLINIC_SATURDAY_CLOSE:14:00}
+    slot-minutes: ${CLINIC_SLOT_MINUTES:30}
+    daily-slot-starts: ${CLINIC_DAILY_SLOT_STARTS:09:00,09:30,10:00,11:00,12:00,13:30}
+    booking-horizon-days: ${CLINIC_BOOKING_HORIZON_DAYS:90}
+    minimum-advance-minutes: ${CLINIC_MINIMUM_ADVANCE_MINUTES:60}
+    providers: ${CLINIC_PROVIDERS:Dr. Maya Chen,Dr. Jordan Lee}
+    holidays: ${CLINIC_HOLIDAYS:}
+  chunking:
+    size: ${CHUNK_SIZE:1200}
+    overlap: ${CHUNK_OVERLAP:150}
+  knowledge-base:
+    path: ${KNOWLEDGE_BASE_PATH:../docs/knowledge-base}
+  ingestion:
+    enabled: ${INGEST_KNOWLEDGE_BASE:false}
