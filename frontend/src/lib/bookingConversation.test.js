@@ -24,8 +24,10 @@ import {
 } from './bookingConversation.js';
 import {
   AppointmentApiError,
+  DEFAULT_PRODUCTION_API_BASE_URL,
   KnowledgeUnavailableError,
   askMolarAI,
+  apiUrl,
   bookAppointment,
   fetchAvailableSlots,
 } from './knowledgeApi.js';
@@ -48,6 +50,12 @@ const laterSlot = {
   status: 'AVAILABLE',
   provider: 'Jordan Lee',
 };
+
+test('API URLs use the local proxy in development and the Render origin in production', () => {
+  assert.equal(apiUrl('/api/knowledge/answer', { development: true, baseUrl: 'http://localhost:8080' }), '/api/knowledge/answer');
+  assert.equal(apiUrl('/api/knowledge/answer', { development: false, baseUrl: 'https://molarai.onrender.com/' }), 'https://molarai.onrender.com/api/knowledge/answer');
+  assert.equal(apiUrl('/api/appointments/slots?date=2030-06-10', { development: false, baseUrl: '' }), `${DEFAULT_PRODUCTION_API_BASE_URL}/api/appointments/slots?date=2030-06-10`);
+});
 
 function advance(conversation, text) {
   return handleBookingMessage(conversation, text, today);
