@@ -16,7 +16,7 @@ The multi-stage image builds with Java 21/Maven and runs the packaged Spring Boo
 
 Create/select a managed PostgreSQL database in the same region as the Render backend. Render Postgres supports pgvector; the existing Flyway V1 migration enables the `vector` extension. The database user must be allowed to run `CREATE EXTENSION vector`. Do not reset or recreate an existing database: Flyway validates and advances its schema in place, with `clean-disabled=true`.
 
-Set `DATABASE_URL` to a JDBC URL of the form `jdbc:postgresql://HOST:5432/DB?sslmode=require`, plus `DATABASE_USERNAME` and `DATABASE_PASSWORD` from the provider. Render's dashboard connection string is commonly a `postgres://` URL; use its host, database, and credentials to supply the JDBC URL and separate username/password variables. Use an internal connection string when available and supported by the provider. `DATABASE_POOL_SIZE` is optional and defaults to 10.
+Set `DATABASE_URL` to the Render PostgreSQL connection URL (`postgres://` or `postgresql://`) and set `DATABASE_USERNAME` and `DATABASE_PASSWORD` using the provider's separate credential values. The production datasource converts the Render URL to JDBC form and removes any URL-embedded user information before passing it to PostgreSQL JDBC; the separate username/password properties are used for authentication. Existing `jdbc:postgresql://` URLs remain supported. Use an internal connection URL when available. `DATABASE_POOL_SIZE` is optional and defaults to 10.
 
 ## Render backend environment
 
@@ -24,7 +24,7 @@ Set `SPRING_PROFILES_ACTIVE=prod`. Required variables are:
 
 | Variable | Purpose |
 | --- | --- |
-| `DATABASE_URL` | Managed PostgreSQL JDBC URL |
+| `DATABASE_URL` | Managed PostgreSQL `postgres://`, `postgresql://`, or JDBC URL |
 | `DATABASE_USERNAME`, `DATABASE_PASSWORD` | Managed database credentials |
 | `CORS_ALLOWED_ORIGINS` | Exact Vercel production origin(s), comma-separated; no wildcard |
 | `CANCELLATION_ENABLED` | `false` for the public demo; server rejects all cancellation endpoints with HTTP 403 |

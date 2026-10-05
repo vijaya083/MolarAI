@@ -6,6 +6,7 @@ import com.molarai.ai.OllamaEmbeddingService;
 import com.molarai.ai.OpenAiEmbeddingService;
 import com.molarai.config.ProductionDeploymentGuard;
 import com.molarai.rag.KnowledgeBaseIngestionRunner;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "OLLAMA_API_KEY=test-only-chat-key",
         "OLLAMA_CHAT_BASE_URL=http://127.0.0.1:1/api",
         "OLLAMA_CHAT_MODEL=test-chat-model",
-        "DATABASE_URL=jdbc:postgresql://127.0.0.1:1/molarai",
+        "DATABASE_URL=postgresql://render-user:render-url-password@db.example.test:5432/molarai?sslmode=require",
         "DATABASE_USERNAME=test-user",
         "DATABASE_PASSWORD=test-password",
         "APPOINTMENT_TIME_ZONE=America/Los_Angeles",
@@ -51,6 +52,9 @@ class ProductionDisabledEmbeddingContextTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private HikariDataSource dataSource;
+
     @Test
     void productionContextStartsWithDisabledEmbeddingsAndNoEmbeddingCredentials() {
         assertThat(context.getEnvironment().getActiveProfiles()).contains("prod");
@@ -60,6 +64,11 @@ class ProductionDisabledEmbeddingContextTest {
         assertThat(context.getBeansOfType(OpenAiEmbeddingService.class)).isEmpty();
         assertThat(context.getBeansOfType(KnowledgeBaseIngestionRunner.class)).hasSize(1);
         assertThat(jdbcTemplate).isNotNull();
+        assertThat(dataSource.getJdbcUrl())
+                .isEqualTo("jdbc:postgresql://db.example.test:5432/molarai?sslmode=require")
+                .doesNotContain("render-user", "render-url-password");
+        assertThat(dataSource.getUsername()).isEqualTo("test-user");
+        assertThat(dataSource.getPassword()).isEqualTo("test-password");
 
         assertThat(context.getEnvironment().getProperty("molarai.ollama.embedding-base-url")).isBlank();
         assertThat(context.getEnvironment().getProperty("molarai.embedding.api-key")).isBlank();
