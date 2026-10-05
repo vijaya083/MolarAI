@@ -8,6 +8,7 @@ import com.molarai.service.AppointmentSlotUnavailableException;
 import com.molarai.service.InvalidAppointmentRequestException;
 import com.molarai.service.CancellationOtpException;
 import com.molarai.service.CancellationDisabledException;
+import com.molarai.service.KnowledgeUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,6 +25,12 @@ public class ApiExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleAiProviderFailure(RuntimeException exception) {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                 .body(new ApiErrorResponse(AI_UNAVAILABLE_MESSAGE));
+    }
+
+    @ExceptionHandler(KnowledgeUnavailableException.class)
+    public ResponseEntity<ApiErrorResponse> handleKnowledgeUnavailable(KnowledgeUnavailableException exception) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ApiErrorResponse(exception.getMessage(), "KNOWLEDGE_UNAVAILABLE"));
     }
 
     @ExceptionHandler(AppointmentSlotNotFoundException.class)

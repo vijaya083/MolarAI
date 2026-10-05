@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class KnowledgeBaseIngestionServiceTest {
@@ -30,7 +31,7 @@ class KnowledgeBaseIngestionServiceTest {
             return content.stream().map(ignored -> List.of(0.1, 0.2)).toList();
         });
         KnowledgeBaseIngestionService service = new KnowledgeBaseIngestionService(
-                loader, new DocumentChunker(10, 2), embedder, repository, 2);
+                loader, new DocumentChunker(10, 2), embedder, repository, 2, "ollama");
 
         KnowledgeBaseIngestionService.IngestionResult result = service.ingest();
 
@@ -60,9 +61,23 @@ class KnowledgeBaseIngestionServiceTest {
                 new KnowledgeDocument("fees", "Fees", "Fees are explained.", Map.of())));
         when(embedder.embedAll(anyList())).thenThrow(new IllegalStateException("provider unavailable"));
         KnowledgeBaseIngestionService service = new KnowledgeBaseIngestionService(
-                loader, new DocumentChunker(20, 2), embedder, repository, 2);
+                loader, new DocumentChunker(20, 2), embedder, repository, 2, "ollama");
 
         assertThrows(IllegalStateException.class, service::ingest);
         verify(repository, never()).replaceDocumentChunks(org.mockito.ArgumentMatchers.anyString(), anyList());
+    }
+
+    @Test
+    void disabledEmbeddingModeStopsBeforeLoadingOrChangingStoredKnowledge() {
+        KnowledgeDocumentLoader loader = mock(KnowledgeDocumentLoader.class);
+        EmbeddingService embedder = mock(EmbeddingService.class);
+        KnowledgeChunkRepository repository = mock(KnowledgeChunkRepository.class);
+        KnowledgeBaseIngestionService service = new KnowledgeBaseIngestionService(
+                loader, new DocumentChunker(20, 2), embedder, repository, 768, "disabled");
+
+        assertThrows(com.molarai.service.KnowledgeUnavailableException.class, service::ingest);
+
+        verify(loader, never()).loadDocuments();
+        verifyNoInteractions(embedder, repository);
     }
 }

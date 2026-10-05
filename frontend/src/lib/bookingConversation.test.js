@@ -22,7 +22,13 @@ import {
   routeIdleMessage,
   shouldAskKnowledge,
 } from './bookingConversation.js';
-import { AppointmentApiError, bookAppointment, fetchAvailableSlots } from './knowledgeApi.js';
+import {
+  AppointmentApiError,
+  KnowledgeUnavailableError,
+  askMolarAI,
+  bookAppointment,
+  fetchAvailableSlots,
+} from './knowledgeApi.js';
 import { isCancellationEnabled } from './demoSettings.js';
 
 const today = '2026-10-01';
@@ -459,6 +465,30 @@ test('bookAppointment returns the booking reference on success', async () => {
     assert.equal(booked.id, 'booked-ref-1');
     assert.equal(booked.status, 'BOOKED');
     assert.equal('patientContact' in booked, false);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test('knowledge-unavailable API response has a clear frontend message', async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: false,
+    status: 503,
+    json: async () => ({
+      code: 'KNOWLEDGE_UNAVAILABLE',
+      error: 'Knowledge-based answers are temporarily unavailable.',
+    }),
+  });
+  try {
+    await assert.rejects(
+      () => askMolarAI('What services do you offer?'),
+      (error) => {
+        assert.equal(error instanceof KnowledgeUnavailableError, true);
+        assert.equal(error.message, 'Knowledge-based answers are temporarily unavailable.');
+        return true;
+      },
+    );
   } finally {
     globalThis.fetch = original;
   }

@@ -5,6 +5,8 @@ import com.molarai.dto.GroundedAnswerResponse;
 import com.molarai.model.KnowledgeSearchMatch;
 import com.molarai.ai.LlmService;
 import com.molarai.ai.LlmAnswerValidationException;
+import com.molarai.ai.DisabledEmbeddingService;
+import com.molarai.repository.KnowledgeChunkRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 
@@ -181,6 +184,39 @@ class GroundedResponseServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.answer("  "));
         verify(retrievalService, never()).search(anyString(), org.mockito.ArgumentMatchers.anyInt());
         verify(appointments, never()).respond(anyString());
+    }
+
+    @Test
+    void disabledEmbeddingsRejectRagQuestionsWithoutVectorSearchOrLlmButKeepDeterministicRoutes() {
+        KnowledgeChunkRepository repository = mock(KnowledgeChunkRepository.class);
+        KnowledgeRetrievalService retrieval = new KnowledgeRetrievalService(new DisabledEmbeddingService(), repository);
+        AppointmentAvailabilityResponder appointments = mock(AppointmentAvailabilityResponder.class);
+        ClinicCalendarResponder calendar = mock(ClinicCalendarResponder.class);
+        LlmService faqLlm = mock(LlmService.class);
+        when(appointments.respond("Any appointment slots tomorrow?")).thenReturn("There are no available appointments.");
+        when(appointments.respond("Is 10:30 AM available tomorrow?")).thenReturn("10:30 AM is available tomorrow.");
+        when(calendar.describeHours("What are your clinic hours?")).thenReturn("The clinic is open weekdays.");
+        when(calendar.describeDate("What day is June 10, 2030?")).thenReturn("June 10, 2030 is Monday.");
+        GroundedResponseService service = new GroundedResponseService(
+                retrieval, new GroundedPromptBuilder(new ObjectMapper()), appointments, calendar,
+                new AppointmentAvailabilityIntentRouter(), faqLlm);
+
+        assertThrows(com.molarai.service.KnowledgeUnavailableException.class,
+                () -> service.answer("Do you accept Aetna insurance?"));
+        assertEquals("There are no available appointments.",
+                service.answer("Any appointment slots tomorrow?").answer());
+        assertEquals("10:30 AM is available tomorrow.",
+                service.answer("Is 10:30 AM available tomorrow?").answer());
+        assertEquals("The clinic is open weekdays.",
+                service.answer("What are your clinic hours?").answer());
+        assertEquals("June 10, 2030 is Monday.",
+                service.answer("What day is June 10, 2030?").answer());
+
+        verifyNoInteractions(repository, faqLlm);
+        verify(appointments).respond("Any appointment slots tomorrow?");
+        verify(appointments).respond("Is 10:30 AM available tomorrow?");
+        verify(calendar).describeHours("What are your clinic hours?");
+        verify(calendar).describeDate("What day is June 10, 2030?");
     }
 
     private GroundedResponseService service(KnowledgeRetrievalService retrieval,

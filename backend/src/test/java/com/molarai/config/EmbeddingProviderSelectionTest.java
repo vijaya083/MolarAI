@@ -1,6 +1,7 @@
 package com.molarai.config;
 
 import com.molarai.ai.EmbeddingService;
+import com.molarai.ai.DisabledEmbeddingService;
 import com.molarai.ai.OllamaEmbeddingService;
 import com.molarai.ai.OpenAiEmbeddingService;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EmbeddingProviderSelectionTest {
@@ -38,6 +40,19 @@ class EmbeddingProviderSelectionTest {
     }
 
     @Test
+    void disabledProviderActivatesWithoutRemoteEmbeddingConfiguration() {
+        contextRunner.withPropertyValues("molarai.embedding.provider=disabled")
+                .run(context -> {
+                    assertTrue(context.getStartupFailure() == null);
+                    assertEquals(1, context.getBeansOfType(EmbeddingService.class).size());
+                    EmbeddingService service = context.getBean(EmbeddingService.class);
+                    assertTrue(service instanceof DisabledEmbeddingService);
+                    assertThrows(com.molarai.service.KnowledgeUnavailableException.class,
+                            () -> service.embedAll(java.util.List.of("clinic hours")));
+                });
+    }
+
+    @Test
     void unsupportedProviderFailsWithClearConfigurationError() {
         contextRunner.withPropertyValues("molarai.embedding.provider=remote-unknown")
                 .run(context -> {
@@ -55,7 +70,8 @@ class EmbeddingProviderSelectionTest {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @Import({EmbeddingProviderConfiguration.class, OllamaEmbeddingService.class, OpenAiEmbeddingService.class})
+    @Import({EmbeddingProviderConfiguration.class, OllamaEmbeddingService.class,
+            OpenAiEmbeddingService.class, DisabledEmbeddingService.class})
     static class ProviderBeans {
         @Bean
         RestClient.Builder restClientBuilder() {

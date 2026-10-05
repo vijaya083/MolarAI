@@ -19,6 +19,7 @@ import {
 } from './lib/bookingConversation.js';
 import {
   askMolarAI,
+  KnowledgeUnavailableError,
   bookAppointment,
   cancelAppointment,
   fetchAppointmentSlot,
@@ -191,9 +192,11 @@ export default function App() {
         sources: response.sources,
         answerSource: response.answerSource,
       }]);
-    } catch {
+    } catch (requestError) {
       if (requestId === requestSequence.current) {
-        setError('I couldn’t reach MolarAI just now. Please check that the assistant service is running, then try again.');
+        setError(requestError instanceof KnowledgeUnavailableError
+          ? requestError.message
+          : 'I couldn’t reach MolarAI just now. Please check that the assistant service is running, then try again.');
       }
     } finally {
       if (requestId === requestSequence.current) {

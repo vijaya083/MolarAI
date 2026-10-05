@@ -5,6 +5,7 @@ import com.molarai.model.DocumentChunk;
 import com.molarai.model.KnowledgeChunk;
 import com.molarai.model.KnowledgeDocument;
 import com.molarai.repository.KnowledgeChunkRepository;
+import com.molarai.service.KnowledgeUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,21 +27,25 @@ public class KnowledgeBaseIngestionService {
     private final EmbeddingService embeddingService;
     private final KnowledgeChunkRepository repository;
     private final int embeddingDimension;
+    private final boolean embeddingEnabled;
 
     public KnowledgeBaseIngestionService(
             KnowledgeDocumentLoader documentLoader,
             DocumentChunker chunker,
             EmbeddingService embeddingService,
             KnowledgeChunkRepository repository,
-            @Value("${molarai.embedding.dimension:768}") int embeddingDimension) {
+            @Value("${molarai.embedding.dimension:768}") int embeddingDimension,
+            @Value("${molarai.embedding.provider:ollama}") String embeddingProvider) {
         this.documentLoader = documentLoader;
         this.chunker = chunker;
         this.embeddingService = embeddingService;
         this.repository = repository;
         this.embeddingDimension = embeddingDimension;
+        this.embeddingEnabled = !"disabled".equalsIgnoreCase(embeddingProvider);
     }
 
     public IngestionResult ingest() {
+        if (!embeddingEnabled) throw new KnowledgeUnavailableException();
         List<KnowledgeDocument> documents = documentLoader.loadDocuments();
         int persistedChunks = 0;
         for (KnowledgeDocument document : documents) {

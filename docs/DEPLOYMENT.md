@@ -29,18 +29,18 @@ Set `SPRING_PROFILES_ACTIVE=prod`. Required variables are:
 | `CORS_ALLOWED_ORIGINS` | Exact Vercel production origin(s), comma-separated; no wildcard |
 | `CANCELLATION_ENABLED` | `false` for the public demo; server rejects all cancellation endpoints with HTTP 403 |
 | `APPOINTMENT_TIME_ZONE`, `CLINIC_*` schedule variables | Real local timezone, opening hours, slot cadence, booking limits, and provider names |
-| `EMBEDDING_PROVIDER` | `openai` or `ollama` |
+| `EMBEDDING_PROVIDER` | `disabled` for the zero-additional-embedding-cost demo, or `openai` / `ollama` when configured |
 | `EMBEDDING_MODEL`, `EMBEDDING_DIMENSION` | Must match the existing database vector width |
 | `OLLAMA_CHAT_BASE_URL`, `OLLAMA_CHAT_MODEL`, `OLLAMA_API_KEY` | Existing hosted chat provider settings |
 | `CANCELLATION_OTP_PROVIDER` | Must name a future real provider; `mock` is rejected in production |
 
-For `EMBEDDING_PROVIDER=openai`, also set `EMBEDDING_API_KEY`; `EMBEDDING_API_BASE_URL` defaults to OpenAI's public API endpoint. For `EMBEDDING_PROVIDER=ollama`, set `OLLAMA_EMBEDDING_BASE_URL` to a reachable service. `PORT` is supplied by Render; the application listens on it. Never put secret values in this repository, Docker build arguments, or Vercel frontend variables.
+For the temporary `EMBEDDING_PROVIDER=disabled` demo, no embedding URL or key is needed; knowledge search and RAG-backed chat return HTTP 503 with `KNOWLEDGE_UNAVAILABLE`, while deterministic appointment availability, date, and clinic-hours answers remain active. This mode does not generate embeddings, ingest documents, query pgvector, or modify existing knowledge records. Keep `EMBEDDING_DIMENSION=768`; do not change the existing schema or embeddings. For `EMBEDDING_PROVIDER=openai`, also set `EMBEDDING_API_KEY`; `EMBEDDING_API_BASE_URL` defaults to OpenAI's public API endpoint and usage may be billable. For `EMBEDDING_PROVIDER=ollama`, set `OLLAMA_EMBEDDING_BASE_URL` to a reachable Ollama API server. `PORT` is supplied by Render; the application listens on it. Never put secret values in this repository, Docker build arguments, or Vercel frontend variables.
 
 Production Flyway migrations run at application startup and schema validation is enabled. The readiness endpoint is `/actuator/health/readiness`; health details are hidden. The existing V1 migration creates pgvector and the configured-dimension V2 migration must agree with `EMBEDDING_DIMENSION`. The existing appointment seed migration contains fictional sample data; review that separately before serving real clinic traffic.
 
 ## Vercel frontend
 
-Import the `MolarAI/frontend/` directory as the Vercel project root (or set the project root to `frontend/`). Use `npm run build` and `dist` as the output directory. Configure `VITE_API_BASE_URL` as the backend's HTTPS origin, for example `https://your-backend.onrender.com`, without a trailing slash. This is a public build-time setting, not a secret. Set `VITE_CANCELLATION_ENABLED=false` in Vercel to hide the cancellation suggestion and prevent starting cancellation through chat. Also set backend `CANCELLATION_ENABLED=false`; the frontend flag is presentation only, and the server-side guard is authoritative. Set the exact frontend origin in Render's `CORS_ALLOWED_ORIGINS`; add any preview origins individually only if needed. Redeploy the frontend after changing build-time variables.
+Import the `MolarAI/frontend/` directory as the Vercel project root (or set the project root to `frontend/`). Use `npm run build` and `dist` as the output directory. Configure `VITE_API_BASE_URL` as the backend's HTTPS origin, for example `https://your-backend.onrender.com`, without a trailing slash. This is a public build-time setting, not a secret. In disabled embedding mode, knowledge-based requests show that answers are temporarily unavailable; deterministic availability/date/hours replies continue working. Set `VITE_CANCELLATION_ENABLED=false` in Vercel to hide the cancellation suggestion and prevent starting cancellation through chat. Also set backend `CANCELLATION_ENABLED=false`; the frontend flag is presentation only, and the server-side guard is authoritative. Set the exact frontend origin in Render's `CORS_ALLOWED_ORIGINS`; add any preview origins individually only if needed. Redeploy the frontend after changing build-time variables.
 
 ## Local development
 

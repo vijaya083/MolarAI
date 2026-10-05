@@ -8,6 +8,7 @@ import com.molarai.service.AppointmentSlotNotFoundException;
 import com.molarai.service.AppointmentSlotUnavailableException;
 import com.molarai.service.CancellationDisabledException;
 import com.molarai.service.InvalidAppointmentRequestException;
+import com.molarai.service.KnowledgeUnavailableException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,5 +62,14 @@ class ApiExceptionHandlerTest {
 
         assertEquals(403, response.getStatusCode().value());
         assertEquals("Appointment cancellation is disabled in this demo.", response.getBody().error());
+    }
+
+    @Test
+    void mapsUnavailableKnowledgeToStructuredServiceUnavailableResponse() {
+        var response = new ApiExceptionHandler().handleKnowledgeUnavailable(new KnowledgeUnavailableException());
+
+        assertEquals(503, response.getStatusCode().value());
+        assertEquals("KNOWLEDGE_UNAVAILABLE", response.getBody().code());
+        assertEquals("Knowledge-based answers are temporarily unavailable.", response.getBody().error());
     }
 }

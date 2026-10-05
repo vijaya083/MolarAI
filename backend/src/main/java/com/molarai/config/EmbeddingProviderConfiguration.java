@@ -8,13 +8,13 @@ import java.util.Set;
 
 @Component
 public class EmbeddingProviderConfiguration {
-    private static final Set<String> SUPPORTED_PROVIDERS = Set.of("ollama", "openai");
+    private static final Set<String> SUPPORTED_PROVIDERS = Set.of("ollama", "openai", "disabled");
 
     public EmbeddingProviderConfiguration(@Value("${molarai.embedding.provider:ollama}") String provider) {
         String normalizedProvider = provider.toLowerCase(Locale.ROOT);
         if (!SUPPORTED_PROVIDERS.contains(normalizedProvider)) {
             throw new IllegalStateException("Unsupported EMBEDDING_PROVIDER '" + provider
-                    + "'. Supported values are: ollama, openai");
+                    + "'. Supported values are: ollama, openai, disabled");
         }
     }
 }

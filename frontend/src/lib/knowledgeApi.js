@@ -6,6 +6,13 @@ const configuredBaseUrl = (import.meta.env?.VITE_API_BASE_URL || '').replace(/\/
 // variable is used as the direct backend origin when one is configured.
 const apiOrigin = import.meta.env?.DEV ? '' : configuredBaseUrl;
 
+export class KnowledgeUnavailableError extends Error {
+  constructor() {
+    super('Knowledge-based answers are temporarily unavailable.');
+    this.name = 'KnowledgeUnavailableError';
+  }
+}
+
 export async function askMolarAI(query) {
   const response = await fetch(`${apiOrigin}/api/knowledge/answer`, {
     method: 'POST',
@@ -14,6 +21,10 @@ export async function askMolarAI(query) {
   });
 
   if (!response.ok) {
+    if (response.status === 503) {
+      const error = await response.json();
+      if (error?.code === 'KNOWLEDGE_UNAVAILABLE') throw new KnowledgeUnavailableError();
+    }
     throw new Error(`MolarAI request failed (${response.status})`);
   }
 

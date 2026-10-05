@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test src/lib/bookingConversation.test.js src/lib/theme.test.js"
+    "test": "node --test src/App.test.js src/lib/bookingConversation.test.js src/lib/theme.test.js"
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.2",
+    "jsdom": "^26.1.0",
     "vite": "^7.1.5"
   }
 }

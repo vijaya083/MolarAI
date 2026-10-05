@@ -234,6 +234,8 @@ The direct `DELETE /api/appointments/slots/{slotId}/booking` endpoint is disable
 
 **Public demo limitation:** cancellation matching, OTP request/resend/verify, and cancellation routes are unauthenticated. For a public demo, set backend `CANCELLATION_ENABLED=false` to block every cancellation route with HTTP 403 and set frontend `VITE_CANCELLATION_ENABLED=false` to hide the cancellation option. The server guard is authoritative; the OTP check is not user authentication, and CORS is not access control. Keep the demo database isolated and use synthetic data only. Public booking also accepts patient name/contact without authentication, so do not collect real patient information.
 
+For a temporary demo without a reachable embedding service or paid embedding API, set `EMBEDDING_PROVIDER=disabled` in the backend. This prevents embedding generation, ingestion, and vector retrieval without touching the existing 768-dimensional schema or records. RAG chat and knowledge search return HTTP 503 (`KNOWLEDGE_UNAVAILABLE`) and the frontend explains the limitation; deterministic availability, date, and clinic-hours responses remain available. Local development continues to default to Ollama embeddings.
+
 ### LLM appointment availability tool
 
 `GroundedResponseService` retains its existing retrieval and prompt-building steps, then uses the bounded tool-call orchestrator and existing Ollama chat provider. The model receives the current application-local date/time (`APPOINTMENT_TIME_ZONE`, default `America/Los_Angeles`) so it can resolve relative dates such as “tomorrow” without relying on the host machine timezone. Ambiguous dates should be clarified rather than guessed.
