@@ -59,3 +59,4 @@ molarai:
     path: ${KNOWLEDGE_BASE_PATH:../docs/knowledge-base}
   ingestion:
     enabled: ${INGEST_KNOWLEDGE_BASE:false}
+
