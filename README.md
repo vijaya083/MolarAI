@@ -1,3 +1,7 @@
+![Uploading Screenshot 2026-10-08 at 12.48.02 AM.png…]()
+
+
+
 # MolarAI
 
 MolarAI is a portfolio project for a fictional dental clinic support agent. The backend includes a Spring Boot/JDBC scaffold, PostgreSQL with pgvector schema management, document-to-embedding ingestion, vector similarity retrieval, grounded LLM answers, RAG evaluation, appointment availability, and LLM-driven appointment lookup. The React/Vite frontend provides a responsive assistant chat experience.
